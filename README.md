@@ -62,20 +62,20 @@ The system combines computer vision and multimodal AI to understand user queries
 
 ---
 
-# Project Structure
+## Project Structure
 
-```
-LocalMatch
+```text
+LocalMatch/
 │
-├── src/                # React frontend
-├── server/             # FastAPI backend
-├── clip_model/         # AI model and embeddings
-├── data/               # Fashion dataset
-├── public/
-└── README.md
+├── src/                    # React frontend
+├── server/                 # FastAPI backend
+│   ├── clip_model/         # AI model, embeddings, and image URL mappings
+│   └── ...
+├── data/                   # Fashion dataset
+├── public/                 # Static assets
+├── README.md
+└── package.json
 ```
-
----
 
 # Prerequisites
 
@@ -168,7 +168,7 @@ http://localhost:8000
 
 ## 3. Start the Frontend
 
-Open a **new terminal** and, from the project root(lokalmatch), run:
+Open a **new terminal** and, from the project root, run:
 
 ```bash
 npm run dev
