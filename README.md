@@ -132,22 +132,48 @@ pip install fastapi uvicorn torch torchvision transformers faiss-cpu pillow nump
 
 # Running the Application
 
-## Start the AI Backend
+## 1. Start the Backend Server
+
+Open a terminal and navigate to the backend folder:
 
 ```bash
 cd server
-uvicorn ai_server:app --reload
 ```
 
-## Start the Frontend
-
-Open a second terminal:
+Start the backend development server:
 
 ```bash
 npm run dev
 ```
 
-The application will be available at:
+---
+
+## 2. Start the AI Server
+
+Open a **new terminal**, navigate to the backend folder, and run:
+
+```bash
+cd server
+py -3.11 -m uvicorn ai_server:app --port 8000
+```
+
+The AI server will be available at:
+
+```
+http://localhost:8000
+```
+
+---
+
+## 3. Start the Frontend
+
+Open a **new terminal** and, from the project root(lokalmatch), run:
+
+```bash
+npm run dev
+```
+
+The frontend will be available at:
 
 ```
 http://localhost:5173
