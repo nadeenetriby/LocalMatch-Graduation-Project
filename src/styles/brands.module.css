@@ -1,0 +1,171 @@
+.container {
+  background-color: var(--color-background);
+  font-family: var(--font-body);
+  color: var(--color-ink);
+  min-height: 100vh;
+}
+
+.mainContent {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: var(--space-12) var(--space-6) var(--space-8);
+}
+
+.brandsHeader {
+  margin-bottom: var(--space-10);
+}
+
+.mainTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  font-weight: 400;
+  text-transform: uppercase;
+  line-height: var(--leading-tight);
+  margin: 0 0 var(--space-3);
+}
+
+.subtitle {
+  font-size: var(--text-base);
+  color: var(--color-ink-mid);
+  line-height: var(--leading-normal);
+  margin: 0;
+  max-width: 560px;
+}
+
+.loadingFull {
+  grid-column: 1 / -1;
+}
+
+.gridSection {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--space-6);
+  margin-bottom: var(--space-10);
+}
+
+.brandCard {
+  background: var(--color-surface);
+  border: 1px solid #E0DFD9;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  transition: box-shadow 0.15s ease-out, transform 0.15s ease-out;
+}
+
+.brandCard:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.brandLogoBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 4 / 3;
+  text-decoration: none;
+  position: relative;
+}
+
+.brandLogoBox::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+.brandLogoBox h2 {
+  font-family: var(--font-display);
+  font-size: calc(var(--text-2xl) * 1.8);
+  font-weight: 400;
+  text-align: center;
+  line-height: var(--leading-tight);
+  margin: 0;
+  padding: var(--space-4);
+  text-transform: uppercase;
+  position: relative;
+  z-index: 1;
+}
+
+.brandInfo {
+  padding: var(--space-4);
+  border-top: 1px solid #E0DFD9;
+}
+
+.brandInfo p {
+  font-size: var(--text-sm);
+  color: var(--color-ink-mid);
+  margin: 0 0 var(--space-3);
+}
+
+.exploreLink {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.exploreLink:hover {
+  color: var(--color-ink);
+}
+
+.error {
+  color: var(--color-error);
+  font-size: var(--text-sm);
+  padding: var(--space-4);
+  border: 1px solid var(--color-error);
+  border-radius: var(--radius-md);
+  background: rgba(196, 43, 43, 0.06);
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  padding: var(--space-6) 0;
+}
+
+.pageBtn {
+  min-width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-surface);
+  border: 1px solid #D0CFC9;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-ink);
+  cursor: pointer;
+  transition: background-color 0.15s ease-out, border-color 0.15s ease-out;
+}
+
+.pageBtn:hover:not(:disabled) {
+  background: var(--color-surface-dim);
+}
+
+.pageBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.activePage {
+  background: var(--color-accent);
+  border-color: var(--color-ink);
+}
+
+.pageEllipsis {
+  color: var(--color-ink-light);
+  padding: 0 var(--space-1);
+}
+
+@media (min-width: 1024px) {
+  .gridSection {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

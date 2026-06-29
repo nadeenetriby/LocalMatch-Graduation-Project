@@ -1,0 +1,154 @@
+import os
+import json
+import time
+import hashlib
+import requests
+import torch
+
+from transformers import BlipProcessor, BlipForConditionalGeneration
+from PIL import Image
+from tqdm import tqdm
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
+
+
+# =========================
+# Device
+# =========================
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print("Device:", device)
+
+
+# =========================
+# PATHS (CHANGE IF NEEDED)
+# =========================
+JSON_INPUT = "/kaggle/input/datasets/mariam6364/dataset/final_dataset.json"
+OUTPUT_JSON = "/kaggle/working/blip_dataset.json"
+CACHE_DIR = "/kaggle/working/image_cache"
+
+os.makedirs(CACHE_DIR, exist_ok=True)
+
+
+# =========================
+# Load BLIP
+# =========================
+blip_processor = BlipProcessor.from_pretrained("rcfg/FashionBLIP-1")
+blip_model = BlipForConditionalGeneration.from_pretrained(
+    "rcfg/FashionBLIP-1"
+).to(device)
+
+blip_model.eval()
+
+if device.type == "cuda":
+    blip_model = blip_model.half()  # save GPU memory
+
+
+# =========================
+# Robust Download Session
+# =========================
+session = requests.Session()
+retries = Retry(
+    total=5,
+    backoff_factor=1.0,
+    status_forcelist=[429, 500, 502, 503, 504],
+    allowed_methods=["GET"]
+)
+session.mount("http://", HTTPAdapter(max_retries=retries))
+session.mount("https://", HTTPAdapter(max_retries=retries))
+
+
+# =========================
+# Image Cache
+# =========================
+def get_image_path(url):
+    return os.path.join(
+        CACHE_DIR,
+        hashlib.md5(url.encode()).hexdigest() + ".jpg"
+    )
+
+
+def load_image(url):
+    path = get_image_path(url)
+
+    # Download if not cached
+    if not os.path.exists(path):
+        try:
+            response = session.get(
+                url,
+                timeout=10,
+                stream=True,
+                headers={"User-Agent": "Mozilla/5.0"}
+            )
+            response.raise_for_status()
+
+            with open(path, "wb") as f:
+                for chunk in response.iter_content(chunk_size=8192):
+                    if chunk:
+                        f.write(chunk)
+
+        except Exception as e:
+            print(f"⚠️ Download failed: {url}\n   {e}")
+            return None
+
+    # Load image
+    try:
+        img = Image.open(path).convert("RGB")
+        return img
+    except Exception as e:
+        print(f"⚠️ Image load failed: {path}\n   {e}")
+        return None
+
+
+# =========================
+# Load Dataset (Resumable)
+# =========================
+if os.path.exists(OUTPUT_JSON):
+    print("Resuming from existing file...")
+    with open(OUTPUT_JSON, "r") as f:
+        dataset = json.load(f)
+else:
+    with open(JSON_INPUT, "r") as f:
+        dataset = json.load(f)
+
+
+# =========================
+# Caption Generation
+# =========================
+for product in tqdm(dataset, desc="Generating captions"):
+
+    # Skip if already captioned
+    if "caption" in product:
+        continue
+
+    if not product.get("images"):
+        continue
+
+    first_image_url = product["images"][0]
+    image = load_image(first_image_url)
+
+    if image is None:
+        continue
+
+    inputs = blip_processor(images=image, return_tensors="pt").to(device)
+
+    with torch.no_grad():
+        outputs = blip_model.generate(**inputs)
+
+    generated_caption = blip_processor.decode(
+        outputs[0],
+        skip_special_tokens=True
+    )
+
+    # Create final caption (name + BLIP)
+    final_caption = f"{product['name'].lower()}, {generated_caption}"
+
+    product["caption"] = final_caption
+
+    # Save after EACH product (crash safe)
+    with open(OUTPUT_JSON, "w") as f:
+        json.dump(dataset, f, indent=4)
+
+    time.sleep(0.1)  # polite delay
+
+
+print("✅ Finished. Captions saved to:", OUTPUT_JSON)
