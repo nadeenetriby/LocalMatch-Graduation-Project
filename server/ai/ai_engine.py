@@ -19,22 +19,32 @@ import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from transformers import AutoTokenizer as NLLBTokenizer
 from transformers import AutoModelForSeq2SeqLM
+from pathlib import Path
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+# clip_model folder
+CLIP_MODEL_DIR = BASE_DIR / "clip_model"
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Device:", device)
+clip_processor = CLIPProcessor.from_pretrained(CLIP_MODEL_DIR)
 
-clip_processor = CLIPProcessor.from_pretrained(r"C:\GraduationProject\webProject_GP_Final\GP\lokalmatch\clip_model")
-clip_model = CLIPModel.from_pretrained(r"C:\GraduationProject\webProject_GP_Final\GP\lokalmatch\clip_model").to(device)
+clip_model = CLIPModel.from_pretrained(CLIP_MODEL_DIR).to(device)
 
 clip_model.eval()
 
 
 # Load embeddings and URLs
-image_embeddings = np.load(r"C:\GraduationProject\webProject_GP_Final\GP\lokalmatch\clip_model\image_embeddings (2).npy")   # shape: (N, dim)
-text_embeddings = np.load(r"C:\GraduationProject\webProject_GP_Final\GP\lokalmatch\clip_model\text_embeddings (2).npy")     # if needed
+image_embeddings = np.load(CLIP_MODEL_DIR / "image_embeddings (2).npy")
+
+text_embeddings = np.load(CLIP_MODEL_DIR / "text_embeddings (2).npy")
+
 all_image_urls = []
-with open(r"C:\GraduationProject\webProject_GP_Final\GP\lokalmatch\clip_model\image_urls (2).jsonl", "r", encoding="utf-8") as f:
+with open(
+    CLIP_MODEL_DIR / "image_urls (2).jsonl",
+    "r",
+    encoding="utf-8"
+) as f:
     for line in f:
         url = line.strip().strip('"')   # removes "quotes"
         all_image_urls.append(url)
