@@ -166,7 +166,7 @@ http://localhost:8000
 
 ## 3. Start the Frontend
 
-Open a **new terminal** and, from the project root(lokalmatch), run:
+Open a **new terminal** and, from the project root, run:
 
 ```bash
 npm run dev
