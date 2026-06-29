@@ -62,20 +62,18 @@ The system combines computer vision and multimodal AI to understand user queries
 
 ---
 
-# Project Structure
-
-```
-LocalMatch
+Project Structure
+LocalMatch/
 │
-├── src/                # React frontend
-├── server/             # FastAPI backend
-├── clip_model/         # AI model and embeddings
-├── data/               # Fashion dataset
-├── public/
-└── README.md
-```
-
----
+├── src/                    # React frontend
+├── server/                 # FastAPI backend
+│   ├── clip_model/         # AI model, embeddings, and image URL mappings
+│   ├── ...
+│
+├── data/                   # Fashion dataset
+├── public/                 # Static assets
+├── README.md
+└── package.json
 
 # Prerequisites
 
